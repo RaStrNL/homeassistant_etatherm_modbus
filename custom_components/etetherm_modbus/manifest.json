@@ -4,9 +4,10 @@
   ],
   "config_flow": false,
   "dependencies": [],
-  "documentation": "https://github.com/PatrikTrestik/etatherm_modbus",
+  "documentation": "https://github.com/PatrikTrestik/homeassistant_etatherm_modbus",
   "domain": "etatherm_modbus",
-  "iot_class": "cloud_push",
+  "iot_class": "local_polling",
   "name": "Etatherm Modbus",
+  "issue_tracker": "https://github.com/PatrikTrestik/homeassistant_etatherm_modbus/issues",
   "version": "1.0.1"
 }
