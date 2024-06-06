@@ -7,7 +7,7 @@ There is no config flow yet.
 Write to configuration.yaml
 
     climate:
-    - platform: etatherm
+    - platform: etatherm_modbus
       host: IP of your Eth1eC/D
       port: 502
       modbus_addr: 1 (It is same as J address of controller)
