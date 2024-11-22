@@ -37,7 +37,7 @@ from .etathermmodbus import EtathermModbus
 
 _LOGGER = logging.getLogger(__name__)
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 
 SUPPORT_FLAGS = 0
 

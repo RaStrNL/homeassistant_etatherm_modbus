@@ -9,13 +9,12 @@ from math import floor
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 from pymodbus.transaction import ModbusRtuFramer
-
+from .const import CONF_MODBUS_RETR, CONF_MODBUS_RETR_WAIT, CONF_MODBUS_TIMEOUT
 _LOGGER = logging.getLogger(__name__)
 
 
 class EtathermModbus:
     """Access to Etatherm climate control by Modbus protocol."""
-
     def __init__(
         self,
         host,
@@ -23,11 +22,10 @@ class EtathermModbus:
         address,
     ):
         """Init method."""
-        self._client = AsyncModbusTcpClient(host=host, port=port, timeout=15)
+        self._client = AsyncModbusTcpClient(host=host, port=port, timeout= CONF_MODBUS_TIMEOUT)
         self._address = address
         self._params = None
         self._lock = asyncio.Lock()
-
     async def get_parameters(self) -> dict[int, dict[str, str]] | None:
         """Read positions configuration parameters."""
         if self._params is None:
@@ -56,8 +54,7 @@ class EtathermModbus:
             data = bytes([data[0] & 0xDF]) + b"\x10\x80\x10\x80"
         else:
             data = bytes([data[0] | 0x20]) + data[1:5]
-            response = await self.async_write_register(self._address, addr, data)
-
+        response = await self.async_write_register(self._address, addr, data)
         if response.isError():
             return False
         return True
@@ -213,11 +210,23 @@ class EtathermModbus:
         kwargs = {"slave": unit} if unit else {}
         async with self._lock:
             await self.__check_connection()
-            return await self._client.read_holding_registers(address, count, **kwargs)
+            for i in range (0, CONF_MODBUS_RETR):
+                regs_l = await self._client.read_holding_registers(address, count, **kwargs)
+                if regs_l.isError():
+                    await asyncio.sleep(CONF_MODBUS_RETR_WAIT)			
+                else:
+                    break
+            return regs_l
 
     async def async_write_register(self, unit, address, payload: bytes):
         kwargs = {"slave": unit} if unit else {}
 
         async with self._lock:
             await self.__check_connection()
-            return await self._client.write_registers(address, list(payload), **kwargs)
+            for i in range (0, CONF_MODBUS_RETR):
+                regs_l = await self._client.write_registers(address, list(payload), **kwargs)
+                if regs_l.isError():
+                    await asyncio.sleep(CONF_MODBUS_RETR_WAIT)			
+                else:
+                    break
+            return regs_l
