@@ -8,7 +8,6 @@ from math import floor
 
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
-from pymodbus.transaction import ModbusRtuFramer
 from .const import CONF_MODBUS_RETR, CONF_MODBUS_RETR_WAIT, CONF_MODBUS_TIMEOUT
 _LOGGER = logging.getLogger(__name__)
 
