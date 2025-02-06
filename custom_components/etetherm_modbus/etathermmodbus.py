@@ -210,7 +210,7 @@ class EtathermModbus:
         async with self._lock:
             await self.__check_connection()
             for i in range (0, CONF_MODBUS_RETR):
-                regs_l = await self._client.read_holding_registers(address, count, **kwargs)
+                regs_l = await self._client.read_holding_registers(address, count=count, **kwargs)
                 if regs_l.isError():
                     await asyncio.sleep(CONF_MODBUS_RETR_WAIT)			
                 else:
